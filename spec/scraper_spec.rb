@@ -1,46 +1,43 @@
-require_relative './spec_helper'
-require_relative '../lib/scraper.rb'
+require_relative "./spec_helper"
+require_relative "../lib/course.rb"
 
-describe "Scraper" do
+describe "Course" do 
 
-  let(:scraper) {Scraper.new}
+  let(:course) {Course.new}
 
-  describe "#get_page" do
-    it "uses Nokogiri to get the HTML from a web page" do
-      doc = scraper.get_page
-      expect{scraper.get_page}.to_not raise_error
-      expect(doc).to be_a(Nokogiri::HTML::Document)
+  context "instance methods" do 
+    describe "#title" do 
+      it "has a setter and a getter method for title" do 
+        course.title = "Programming Robots for Outer Space"
+        expect(course.title).to eq("Programming Robots for Outer Space")
+      end
     end
-  end
 
-  before(:each) do
-    Course.reset_all
-  end
+    describe "#schedule" do 
+      it "has a setter and a getter method for a course's schedule" do 
+        course.schedule = "Full-Time"
+        expect(course.schedule).to eq("Full-Time")
+      end
+    end
 
-  describe "#get_courses" do
-    it "uses a CSS selector to return an array of Nokogiri XML elements representing the courses described on the web page we are scraping" do
-      course_offerings = scraper.get_courses
-      expect(course_offerings.class).to be(Nokogiri::XML::NodeSet)
-      expect(course_offerings.empty?).not_to be(true)
-      course_offerings.each do |course_offering|
-        expect(course_offering).to be_a(Nokogiri::XML::Element)
-        expect{course_offering.css("h2").text}.to_not raise_error
+    describe "#description" do 
+      it "has a setter and a getter method for a course's description" do 
+        course.description = "Learn how to program robots to explore the depths of space. Guest lecturer: The Mars Rover"
+        expect(course.description).to eq("Learn how to program robots to explore the depths of space. Guest lecturer: The Mars Rover")
       end
     end
   end
 
-  describe "#make_courses" do
-    it "iterates over the courses array returned by #get_courses and creates a new Course instance out of each array element." do
-      Course.reset_all
-      courses = scraper.make_courses
-      expect(Course.all.class).to be(Array)
-      expect(Course.all.empty?).not_to be(true)
-      Course.all.each do |course|
-        expect(course.title).to be_a String
-        expect(course.schedule).to be_a String
-        expect(course.description).to be_a String
+
+  context "class methods" do 
+    describe ".all" do 
+      it "returns an array of all the instances of the Course class" do
+        Course.reset_all
+        course_one = Course.new
+        course_two = Course.new
+        course_three = Course.new 
+        expect(Course.all).to match_array([course, course_one, course_two, course_three])
       end
     end
   end
-
 end
